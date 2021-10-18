@@ -1,0 +1,1 @@
+2021-10-18 23:04:35: imagepng(public/img/QRCodes): Failed to open stream: No such file or directory
