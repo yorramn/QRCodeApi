@@ -13,11 +13,16 @@ class QRCodeService
 {
     public function list(array $parameters = null): JsonResponse
     {
+        foreach ($parameters as $key => $parameter){
+            if(is_null($parameter)){
+                unset($parameters[$key]);
+            }
+        }
         try {
             $parameters != null ?
                 $qrCode = QR::where($parameters)->where('user_id', auth('api')->user()->id)->get() :
                 $qrCode = QR::where('user_id', auth('api')->user()->id)->get();
-            return send_response('', $qrCode[1], 200);
+            return send_response('', $qrCode, 200);
         } catch (\Exception $exception) {
             return send_error($exception->getMessage(), '', $exception->getCode());
         }
@@ -131,5 +136,43 @@ class QRCodeService
                 $response = send_error('Erro ao selecionar o tipo de QRCode!', '', 404);
         }
         return $response;
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        try {
+            $qr = QR::findOrFail($id);
+            return send_response('', $qr, 200);
+        } catch (\Exception $exception) {
+            return send_error('Não foi possível encontrar este QRCode!', $exception->getMessage(), 404);
+        }
+    }
+
+    public function update($content, $id): JsonResponse
+    {
+        $qr = QR::findOrFail($id);
+        if(isset($qr)){
+            try {
+                $qr->update($content);
+                return send_response('QRCode atualizado com sucesso', $qr, 200);
+            } catch (\Exception $exception) {
+                return send_error('Não foi possível atualizar este QRCode!', $exception->getMessage(), 406);
+            }
+        }else{
+            return send_error('Erro ao atualizar o QRCode', '', 422);
+        }
+
+    }
+
+    public function delete(int $id): JsonResponse
+    {
+        try {
+            $qr = QR::find($id);
+            abort_if(!$qr, 404, 'Não foi possível encontrar este QRCode');
+            $qr->delete();
+            return send_response('QRCode excluído com sucesso', null, 200);
+        } catch (\Exception $exception) {
+            return send_error('Não foi possível encontrar este QRCode!', $exception->getMessage(), 404);
+        }
     }
 }

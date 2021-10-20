@@ -1,78 +1,89 @@
 <?php return array (
-  'facade/ignition' =>
+  'facade/ignition' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Facade\\Ignition\\IgnitionServiceProvider',
     ),
-    'aliases' =>
+    'aliases' => 
     array (
       'Flare' => 'Facade\\Ignition\\Facades\\Flare',
     ),
   ),
-  'fruitcake/laravel-cors' =>
+  'fruitcake/laravel-cors' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Fruitcake\\Cors\\CorsServiceProvider',
     ),
   ),
-  'laravel/sail' =>
+  'laravel/sail' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Laravel\\Sail\\SailServiceProvider',
     ),
   ),
-  'laravel/sanctum' =>
+  'laravel/sanctum' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
     ),
   ),
-  'laravel/tinker' =>
+  'laravel/socialite' => 
   array (
-    'providers' =>
+    'providers' => 
+    array (
+      0 => 'Laravel\\Socialite\\SocialiteServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'Socialite' => 'Laravel\\Socialite\\Facades\\Socialite',
+    ),
+  ),
+  'laravel/tinker' => 
+  array (
+    'providers' => 
     array (
       0 => 'Laravel\\Tinker\\TinkerServiceProvider',
     ),
   ),
-  'nesbot/carbon' =>
+  'nesbot/carbon' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Carbon\\Laravel\\ServiceProvider',
     ),
   ),
-  'nunomaduro/collision' =>
+  'nunomaduro/collision' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
-  'tymon/jwt-auth' =>
+  'tymon/jwt-auth' => 
   array (
-    'aliases' =>
+    'aliases' => 
     array (
       'JWTAuth' => 'Tymon\\JWTAuth\\Facades\\JWTAuth',
       'JWTFactory' => 'Tymon\\JWTAuth\\Facades\\JWTFactory',
     ),
-    'providers' =>
+    'providers' => 
     array (
       0 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
     ),
   ),
-  'werneckbh/laravel-qr-code' =>
+  'werneckbh/laravel-qr-code' => 
   array (
-    'providers' =>
+    'providers' => 
     array (
       0 => 'LaravelQRCode\\Providers\\QRCodeServiceProvider',
     ),
-    'aliases' =>
+    'aliases' => 
     array (
-      'QR' => 'LaravelQRCode\\Facades\\QRCode',
+      'QRCode' => 'LaravelQRCode\\Facades\\QRCode',
     ),
   ),
 );

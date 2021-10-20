@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\QR;
 use App\Services\QRCodeService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use LaravelQRCode\Facades\QRCode;
 
 class QRCodeController extends Controller
 {
@@ -25,12 +25,23 @@ class QRCodeController extends Controller
     public function index(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
+            'title' => 'string',
+            'subtitle' => 'string',
             'type' => 'string',
+            'created_at' => 'date',
+            'updated_at' => 'date',
+
         ]);
-        if ($validator->fails()) {
-            return send_error('Erro ao listar QRCodes', $validator->errors(), 422);
+        if ($validator->fails() || !in_array($request->type,['phone','text','email','url','sms','wifi','contato','calendar',null])) {
+            return send_error('Erro ao listar QRCodes! Não há este tipo de QRCode cadastrado.', $validator->errors(), 422);
         } else {
-            $request->type != null ? $parameters = ['type' => $request->type] : $parameters = null;
+            $request->all() != null  ? $parameters = [
+                'type' => $request->type,
+                'title' => $request->title,
+                'subtitle' => $request->subtitle,
+                'created_at' => $request->created_at,
+                'updated_at' => $request->updated_at,
+                ] : $parameters = null;
             return $this->qrCodeService->list($parameters);
         }
     }
@@ -52,51 +63,64 @@ class QRCodeController extends Controller
         if ($validator->fails()) {
             return send_error('Erro ao validar o cadastro do QR', $validator->errors(), 422);
         } else {
-            $params = [
-                'title' => $request->title,
-                'subtitle' => $request->subtitle,
-                'type' => $request->type,
-                'content' => $request->contents
-            ];
-            try {
-                return $this->qrCodeService->store($params, $params['type']);
-            } catch (\Exception $exception) {
-                return send_error('Erro ao cadastrar o QR', $exception->getMessage(), 422);
+            $count = count(QR::where([
+                ['user_id', auth('api')->user()->id],
+                ['title', $request->title],
+                ['subtitle', $request->subtitle],
+            ])->get());
+            if ($count > 1) {
+                return send_error('Já existe um QRCode com nome de ' . $request->title, '', 422);
+            } else {
+                $params = [
+                    'title' => $request->title,
+                    'subtitle' => $request->subtitle,
+                    'type' => $request->type,
+                    'content' => $request->contents
+                ];
+                try {
+                    return $this->qrCodeService->store($params, $params['type']);
+                } catch (\Exception $exception) {
+                    return send_error('Erro ao cadastrar o QRCode', $exception->getMessage(), 422);
+                }
             }
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+
+    public function show($id): JsonResponse
     {
-        //
+        return $this->qrCodeService->show($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+
+    public function update(int $id, Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:100',
+            'subtitle' => 'string|max:100',
+            'type' => 'required|string',
+            'contents' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return send_error('Erro ao validar a edição do QR', $validator->errors(), 422);
+        } else {
+            $params = [
+                'title' => $request->title,
+                'subtitle' => $request->subtitle,
+                'type' => $request->type,
+                'content' => $request->contents,
+                'user_id' => auth('api')->user()->id
+            ];
+            try {
+                return $this->qrCodeService->update($params,$id);
+            } catch (\Exception $exception) {
+                return send_error('Não foi possível encontrar este QRCode!', $exception->getMessage(), 404);
+            }
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        //
+        return $this->qrCodeService->delete($id);
     }
 }
