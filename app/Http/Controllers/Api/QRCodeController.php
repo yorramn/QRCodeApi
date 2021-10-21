@@ -30,7 +30,6 @@ class QRCodeController extends Controller
             'type' => 'string',
             'created_at' => 'date',
             'updated_at' => 'date',
-
         ]);
         if ($validator->fails() || !in_array($request->type,['phone','text','email','url','sms','wifi','contato','calendar',null])) {
             return send_error('Erro ao listar QRCodes! Não há este tipo de QRCode cadastrado.', $validator->errors(), 422);
@@ -68,7 +67,7 @@ class QRCodeController extends Controller
                 ['title', $request->title],
                 ['subtitle', $request->subtitle],
             ])->get());
-            if ($count > 1) {
+            if ($count >= 1) {
                 return send_error('Já existe um QRCode com nome de ' . $request->title, '', 422);
             } else {
                 $params = [
@@ -96,9 +95,9 @@ class QRCodeController extends Controller
     public function update(int $id, Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required|max:100',
+            'title' => 'max:100',
             'subtitle' => 'string|max:100',
-            'type' => 'required|string',
+            'type' => 'string',
             'contents' => 'required'
         ]);
         if ($validator->fails()) {

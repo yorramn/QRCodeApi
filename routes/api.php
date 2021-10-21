@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\QRCodeController;
 use App\Http\Controllers\Api\UserController;
 
+use App\Http\Controllers\ChartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
@@ -32,12 +33,18 @@ Route::group(['middleware' => ['apiJwt']], function () {
     Route::group(['prefix' => 'qrcodes'], function () {
         Route::get('', [QRCodeController::class, 'index'])->name('qrcodes.index');
         Route::post('', [QRCodeController::class, 'store'])->name('qrcodes.store');
+
         Route::group(['prefix' => '{id}'], function () {
             Route::get('', [QRCodeController::class, 'show'])->name('qrcodes.show');
             Route::put('', [QRCodeController::class, 'update'])->name('qrcodes.update');
             Route::delete('', [QRCodeController::class, 'destroy'])->name('qrcodes.destroy');
         });
+
     });
+    Route::group(['prefix' => 'charts'], function(){
+        Route::get('', [ChartController::class, 'index'])->name('qrcodes.charts.index');
+    });
+
 
     // logout
     Route::post('/logout', [AuthController::class, 'logout']);

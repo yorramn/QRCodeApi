@@ -9,12 +9,12 @@ function send_error($message, $messages = [], $code = 404):\Illuminate\Http\Json
     return response()->json([$response],$code);
 }
 
-function send_response($message, $data = null, $code = 200):\Illuminate\Http\JsonResponse
+function send_response($message, $data = [], $code = 200):\Illuminate\Http\JsonResponse
 {
     $response = [
       'status' => true,
       'message' => $message
     ];
-    $data != null ? $response['data'] = $data : null;
+    !empty($data) ? $response['data'] = $data : null;
     return response()->json([$response],$code);
 }
