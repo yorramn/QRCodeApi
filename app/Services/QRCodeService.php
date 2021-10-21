@@ -182,8 +182,10 @@ class QRCodeService
         }
     }
 
-    public function listCount($initial)
+    public function listCount($initial, $final)
     {
-        return count(QR::where('user_id',auth()->user()->id)->where('created_at',$initial)->get());
+        return QR::where('user_id',auth()->user()->id)
+            ->whereBetween('created_at',[$initial , $final])
+            ->get();
     }
 }
